@@ -165,7 +165,7 @@
     if (saved === "glass") saved = "light";
     const urlTheme = fromUrl === "glass" ? "light" : fromUrl;
     const allowed = new Set(["light", "dark"]);
-    const theme = allowed.has(urlTheme) ? urlTheme : allowed.has(saved) ? saved : "light";
+    const theme = allowed.has(urlTheme) ? urlTheme : allowed.has(saved) ? saved : "dark";
     document.documentElement.setAttribute("data-theme", theme);
     updateThemeToggleLabel(theme);
   }
@@ -181,12 +181,12 @@
       light: "Переключить на тёмную тему",
       dark: "Переключить на светлую тему",
     };
-    els.themeToggle.setAttribute("aria-label", labels[theme] || labels.light);
+    els.themeToggle.setAttribute("aria-label", labels[theme] || labels.dark);
     els.themeToggle.innerHTML = theme === "light" ? THEME_SUN_ICON : THEME_MOON_ICON;
   }
 
   function toggleTheme() {
-    const current = document.documentElement.getAttribute("data-theme") || "light";
+    const current = document.documentElement.getAttribute("data-theme") || "dark";
     const next = current === "dark" ? "light" : "dark";
     document.documentElement.setAttribute("data-theme", next);
     localStorage.setItem("ec_theme", next);
@@ -989,9 +989,47 @@
     });
   }
 
-  function renderPlatformRecTips() {
-    document.querySelectorAll(".plat-chip-tip").forEach((node) => node.remove());
+  const PLATFORM_TIP_VISIBLE_MS = 5500;
+  const PLATFORM_TIP_FADE_MS = 700;
+  let platformTipHideTimer = null;
+  let platformTipFadeTimer = null;
+  let platformTipActiveKey = null;
 
+  function clearPlatformTipTimers() {
+    if (platformTipHideTimer) {
+      clearTimeout(platformTipHideTimer);
+      platformTipHideTimer = null;
+    }
+    if (platformTipFadeTimer) {
+      clearTimeout(platformTipFadeTimer);
+      platformTipFadeTimer = null;
+    }
+  }
+
+  function fadeOutPlatformTip(tip, id, kind) {
+    if (!tip || !tip.isConnected) {
+      clearPlatformTipTimers();
+      platformTipActiveKey = null;
+      state.dismissedPlatformTips[`${id}:${kind}`] = true;
+      renderPlatformRecTips();
+      return;
+    }
+    if (tip.classList.contains("is-fading")) return;
+
+    clearPlatformTipTimers();
+    tip.classList.add("is-fading");
+    tip.classList.remove("is-visible");
+    state.dismissedPlatformTips[`${id}:${kind}`] = true;
+
+    platformTipFadeTimer = setTimeout(() => {
+      tip.remove();
+      platformTipActiveKey = null;
+      platformTipFadeTimer = null;
+      renderPlatformRecTips();
+    }, PLATFORM_TIP_FADE_MS);
+  }
+
+  function renderPlatformRecTips() {
     const recommended = state.recommendedPlatforms || [];
     const tips = [];
     const goalLabel = goalTipLabel(state.goal);
@@ -1028,33 +1066,69 @@
       });
     }
 
-    tips.forEach(({ id, kind, text }) => {
-      const chip = document.querySelector(`.plat-chip[data-platform="${id}"]`);
-      if (!chip) return;
-      const tip = document.createElement("div");
-      tip.className = "plat-chip-tip";
-      tip.setAttribute("role", "status");
+    const next = tips[0] || null;
+    const nextKey = next ? `${next.id}:${next.kind}` : null;
+    const existing = document.querySelector(".plat-chip-tip");
 
-      const body = document.createElement("p");
-      body.className = "plat-chip-tip-text";
-      body.textContent = text;
+    if (!next) {
+      clearPlatformTipTimers();
+      platformTipActiveKey = null;
+      document.querySelectorAll(".plat-chip-tip").forEach((node) => node.remove());
+      return;
+    }
 
-      const close = document.createElement("button");
-      close.type = "button";
-      close.className = "plat-chip-tip-close";
-      close.setAttribute("aria-label", "Скрыть подсказку");
-      close.textContent = "×";
-      close.addEventListener("click", (event) => {
-        event.preventDefault();
-        event.stopPropagation();
-        state.dismissedPlatformTips[`${id}:${kind}`] = true;
-        tip.remove();
-      });
+    // Уже показываем нужную подсказку — не сбрасываем таймер при каждом render.
+    if (
+      platformTipActiveKey === nextKey &&
+      existing &&
+      !existing.classList.contains("is-fading")
+    ) {
+      const body = existing.querySelector(".plat-chip-tip-text");
+      if (body && body.textContent !== next.text) body.textContent = next.text;
+      return;
+    }
 
-      tip.appendChild(close);
-      tip.appendChild(body);
-      chip.appendChild(tip);
+    clearPlatformTipTimers();
+    document.querySelectorAll(".plat-chip-tip").forEach((node) => node.remove());
+
+    const chip = document.querySelector(`.plat-chip[data-platform="${next.id}"]`);
+    if (!chip) {
+      platformTipActiveKey = null;
+      return;
+    }
+
+    platformTipActiveKey = nextKey;
+    const tip = document.createElement("div");
+    tip.className = "plat-chip-tip";
+    tip.setAttribute("role", "status");
+    tip.dataset.tipKey = nextKey;
+
+    const body = document.createElement("p");
+    body.className = "plat-chip-tip-text";
+    body.textContent = next.text;
+
+    const close = document.createElement("button");
+    close.type = "button";
+    close.className = "plat-chip-tip-close";
+    close.setAttribute("aria-label", "Скрыть подсказку");
+    close.textContent = "×";
+    close.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      fadeOutPlatformTip(tip, next.id, next.kind);
     });
+
+    tip.appendChild(close);
+    tip.appendChild(body);
+    chip.appendChild(tip);
+
+    requestAnimationFrame(() => {
+      tip.classList.add("is-visible");
+    });
+
+    platformTipHideTimer = setTimeout(() => {
+      fadeOutPlatformTip(tip, next.id, next.kind);
+    }, PLATFORM_TIP_VISIBLE_MS);
   }
 
   /** Проекция долей на коридоры ∩ simplex (сумма = 1). */
@@ -4232,6 +4306,9 @@
     state.goal = goal;
     state.platformOverrides = {};
     state.dismissedPlatformTips = {};
+    clearPlatformTipTimers();
+    platformTipActiveKey = null;
+    document.querySelectorAll(".plat-chip-tip").forEach((node) => node.remove());
     if (els.goalSwitch) {
       els.goalSwitch.dataset.goal = goal;
       els.goalSwitch.querySelectorAll(".goal-option[role='radio']").forEach((btn) => {
