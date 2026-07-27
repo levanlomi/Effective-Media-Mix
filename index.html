@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Effective Media Mix — оценка диджитал-ёмкости</title>
+  <meta name="description" content="Ориентир по бюджету: Яндекс Поиск, Медийка, VK, Telegram и Avito — охват, клики, CPC/CPM и медиамикс." />
+  <link rel="preconnect" href="https://yastatic.net" crossorigin />
+  <link rel="preload" href="https://yastatic.net/s3/home/fonts/ys/4/text-regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="https://yastatic.net/s3/home/fonts/ys/4/text-medium.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <div class="brand">
+      <img class="brand-logo" src="assets/Logo2.png" alt="" />
+      <div class="brand-text">
+        <p class="brand-name">Effective Media Mix</p>
+        <p class="brand-lead">шпаргалка для маркетолога — ориентиры по охвату и трафику</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="theme-toggle" id="themeToggle" aria-label="Переключить тему"></button>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel planner" aria-labelledby="plannerTitle">
+      <h2 id="plannerTitle" class="visually-hidden">Планировщик ёмкости</h2>
+      <div class="planner-grid">
+        <div class="planner-inputs planner-card" aria-labelledby="inputsTitle">
+          <h2 id="inputsTitle">Вводные</h2>
+          <div class="inputs-stack">
+            <div class="field">
+              <div class="field-legend-row" id="goalLabel">
+                <span>Цель</span>
+                <button
+                  type="button"
+                  class="help-tip"
+                  id="goalHelpTip"
+                  aria-expanded="false"
+                  aria-controls="goalHelpPop"
+                  aria-label="О целях кампании"
+                >
+                  ?
+                </button>
+                <div class="help-pop" id="goalHelpPop" role="tooltip" hidden>
+                  Цель <strong>«Конверсии»</strong> сейчас в разработке и будет добавлена в инструмент в следующих релизах.
+                </div>
+              </div>
+              <div class="goal-switch-row">
+                <div
+                  class="goal-switch"
+                  id="goalSwitch"
+                  role="radiogroup"
+                  aria-labelledby="goalLabel"
+                  data-goal="reach"
+                >
+                  <button type="button" class="goal-option" role="radio" aria-checked="true" data-goal="reach">
+                    Охват
+                  </button>
+                  <button type="button" class="goal-option" role="radio" aria-checked="false" data-goal="traffic">
+                    Трафик
+                  </button>
+                  <span class="goal-knob" aria-hidden="true"></span>
+                </div>
+                <span class="goal-soon" title="Скоро" aria-disabled="true">Конверсии</span>
+              </div>
+            </div>
+
+            <fieldset class="field">
+              <legend id="geoLabel" class="field-legend-row">
+                <span>География</span>
+                <button
+                  type="button"
+                  class="help-tip"
+                  id="geoHelpTip"
+                  aria-expanded="false"
+                  aria-controls="geoHelpPop"
+                  aria-label="Как устроены гео-срезы"
+                >
+                  ?
+                </button>
+                <div class="help-pop" id="geoHelpPop" role="tooltip" hidden>
+                  <strong>Мск+СПб</strong> — Москва, Санкт-Петербург и их области (МО и&nbsp;ЛО).
+                  <strong>Регионы</strong> — расчёт без Мск+МО и СПб+ЛО.
+                </div>
+              </legend>
+              <div
+                class="geo-switch"
+                id="geoSwitch"
+                role="radiogroup"
+                aria-labelledby="geoLabel"
+                data-geo="capitals"
+              >
+                <button type="button" class="geo-option" role="radio" aria-checked="true" data-geo="capitals" title="Мск+МО и СПб+ЛО">
+                  Мск+СПб
+                </button>
+                <button type="button" class="geo-option" role="radio" aria-checked="false" data-geo="russia" title="Россия">
+                  Россия
+                </button>
+                <button type="button" class="geo-option" role="radio" aria-checked="false" data-geo="regions" title="Регионы без МО и ЛО">
+                  Регионы
+                </button>
+                <span class="geo-knob" aria-hidden="true"></span>
+              </div>
+            </fieldset>
+
+            <fieldset class="field">
+              <legend id="periodLabel" class="field-legend-row">
+                <span>Срок кампании</span>
+                <button
+                  type="button"
+                  class="help-tip"
+                  id="periodHelpTip"
+                  aria-expanded="false"
+                  aria-controls="periodHelpPop"
+                  aria-label="Как учитывается срок кампании"
+                >
+                  ?
+                </button>
+                <div class="help-pop" id="periodHelpPop" role="tooltip" hidden>
+                  Численность аудитории (ёмкость рынка) от срока не зависит.
+                  Меняются накопленная частота показов и доступный инвентарь за период —
+                  от месячных бенчмарков, сублинейно.
+                  На коротком сроке пороги подключения каналов ниже: при тех же ₽ набор может открыться раньше.
+                </div>
+              </legend>
+              <div
+                class="period-switch"
+                id="periodSwitch"
+                role="radiogroup"
+                aria-labelledby="periodLabel"
+                data-period="two_weeks"
+              >
+                <button type="button" class="period-option" role="radio" aria-checked="false" data-period="week">
+                  Неделя
+                </button>
+                <button type="button" class="period-option" role="radio" aria-checked="true" data-period="two_weeks">
+                  2 недели
+                </button>
+                <button type="button" class="period-option" role="radio" aria-checked="false" data-period="month">
+                  Месяц
+                </button>
+                <span class="period-knob" aria-hidden="true"></span>
+              </div>
+            </fieldset>
+
+            <div class="field">
+              <div class="field-legend-row" id="industryLabel">
+                <label for="industrySelect">Индустрия</label>
+                <button
+                  type="button"
+                  class="help-tip"
+                  id="industryHelpTip"
+                  aria-expanded="false"
+                  aria-controls="industryHelpPop"
+                  aria-label="Как влияет индустрия"
+                >
+                  ?
+                </button>
+                <div class="help-pop" id="industryHelpPop" role="tooltip" hidden>
+                  Ниша меняет бенчи площадок, КФ Поиска и (где задано) медиамикс.
+                  Автоподключение каналов по бюджету считает пороги по полному гео — ниша на лестницу unlock не влияет.
+                </div>
+              </div>
+              <div class="industry-select-wrap">
+                <select id="industrySelect" class="industry-select" aria-label="Индустрия">
+                  <option value="">Любая</option>
+                  <option value="realty" selected>Недвижимость</option>
+                </select>
+              </div>
+            </div>
+
+            <fieldset class="field">
+              <legend class="field-legend-row" id="platformsLabel">
+                <span>Инструменты</span>
+                <button
+                  type="button"
+                  class="help-tip"
+                  id="platformsHelpTip"
+                  aria-expanded="false"
+                  aria-controls="platformsHelpPop"
+                  aria-label="Как выбрать инструменты"
+                >
+                  ?
+                </button>
+                <div class="help-pop" id="platformsHelpPop" role="tooltip" hidden>
+                  Набор подключается сам по мере роста бюджета: сначала каналы с сильным fit под цель,
+                  затем по весу в медиамиксе.
+                  Можно включить канал вручную раньше — покажем рекомендацию отключить.
+                  Выключенный вручную канал не вернётся, пока вы его снова не включите
+                  (при смене цели ручные правки сбрасываются).
+                </div>
+              </legend>
+              <div class="platform-split" role="group" aria-label="Сплит инструментов">
+                <div class="platform-split-row">
+                  <label class="plat-chip" data-platform="direct">
+                    <input type="checkbox" name="platform" value="direct" />
+                    <span>Я.Поиск</span>
+                  </label>
+                  <label class="plat-chip" data-platform="media">
+                    <input type="checkbox" name="platform" value="media" />
+                    <span>Я.Медийка</span>
+                  </label>
+                  <label class="plat-chip" data-platform="vk">
+                    <input type="checkbox" name="platform" value="vk" />
+                    <span>VK</span>
+                  </label>
+                  <label class="plat-chip" data-platform="telegram">
+                    <input type="checkbox" name="platform" value="telegram" />
+                    <span>Telegram</span>
+                  </label>
+                  <label class="plat-chip" data-platform="avito">
+                    <input type="checkbox" name="platform" value="avito" />
+                    <span>Avito</span>
+                  </label>
+                </div>
+              </div>
+            </fieldset>
+
+            <div class="field budget-field">
+              <div class="field-legend-row" id="budgetLabel">
+                <label for="budget">Тотал-бюджет, ₽</label>
+                <button
+                  type="button"
+                  class="help-tip"
+                  id="budgetHelpTip"
+                  aria-expanded="false"
+                  aria-controls="budgetHelpPop"
+                  aria-label="Как учитывается тотал-бюджет"
+                >
+                  ?
+                </button>
+                <div class="help-pop" id="budgetHelpPop" role="tooltip" hidden>
+                  Тотал на выбранный срок; делится медиамиксом под цель. По мере роста бюджета подключаются самые эффективные каналы.
+                </div>
+              </div>
+              <div class="budget-row">
+                <div class="budget-input-wrap">
+                  <input type="text" id="budget" inputmode="numeric" autocomplete="off" value="2 900 000" aria-label="Тотал-бюджет в рублях" />
+                  <div class="budget-rich-tip" id="budgetRichTip" hidden aria-live="polite">
+                    <span class="budget-rich-coins" aria-hidden="true">
+                      <span>₽</span><span>₽</span><span>₽</span><span>₽</span>
+                    </span>
+                    <span class="budget-rich-text">да вы богач!</span>
+                  </div>
+                </div>
+                <div class="budget-range-wrap">
+                  <input type="range" id="budgetRange" min="50000" max="5000000" step="50000" value="2900000" aria-label="Тотал-бюджет слайдером" />
+                  <div class="budget-slider-hint" id="budgetSliderHint" hidden aria-hidden="true">
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                    <span aria-hidden="true"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="planner-capacity">
+          <div class="planner-card capacity-card" aria-labelledby="capacityTitle">
+            <div class="section-head">
+              <h2 id="capacityTitle">Ёмкость и результат за бюджет</h2>
+            </div>
+            <div class="capacity-viz" id="capacityBars"></div>
+          </div>
+          <div id="overlapMount"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel mix" aria-labelledby="mixTitle">
+      <div class="section-head mix-section-head">
+        <h2 id="mixTitle">Обоснование медиамикса</h2>
+        <p class="section-sub" id="mixSub">—</p>
+      </div>
+      <div id="mixBody"></div>
+    </section>
+
+    <section class="panel platforms is-collapsed" aria-labelledby="platformsTitle" data-collapsible>
+      <div class="section-head platforms-section-head panel-collapse-head">
+        <button
+          type="button"
+          class="panel-collapse-toggle"
+          id="platformsCollapseToggle"
+          aria-expanded="false"
+          aria-controls="platformsPanelBody"
+        >
+          <span class="panel-collapse-titles">
+            <span class="platforms-title-row">
+              <h2 id="platformsTitle">Сравнение площадок</h2>
+            </span>
+            <span class="section-sub">Оценки по доле тотал-бюджета в рекомендованном миксе</span>
+          </span>
+          <span class="panel-collapse-chevron" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="panel-collapse-body" id="platformsPanelBody" hidden>
+        <div id="platformGrid"></div>
+      </div>
+    </section>
+
+    <section class="panel seasonality is-collapsed" aria-labelledby="seasonalityTitle" data-collapsible>
+      <div class="section-head panel-collapse-head seasonality-section-head">
+        <button
+          type="button"
+          class="panel-collapse-toggle"
+          id="seasonalityCollapseToggle"
+          aria-expanded="false"
+          aria-controls="seasonalityPanelBody"
+        >
+          <span class="panel-collapse-titles">
+            <h2 id="seasonalityTitle">Сезонность спроса</h2>
+          </span>
+          <div id="seasonalityHeadMeta" class="seasonality-head-slot" hidden></div>
+          <span class="panel-collapse-chevron" aria-hidden="true"></span>
+        </button>
+        <div class="seasonality-sub-row">
+          <span class="section-sub" id="seasonalitySub">Индекс поисковой активности пользователей относительно среднего за год</span>
+          <button
+            type="button"
+            class="help-tip"
+            id="seasonalityHelpTip"
+            aria-expanded="false"
+            aria-controls="seasonalityHelpPop"
+            aria-label="Как считается индекс сезонности"
+          >
+            ?
+          </button>
+          <div class="help-pop" id="seasonalityHelpPop" role="tooltip" hidden>
+            Индекс считается как объём поисковых запросов в месяц к среднемесячному объёму запросов;
+            100% — средний уровень интереса за год. Значения выше 100% — выше среднего, ниже 100% — ниже среднего.
+          </div>
+        </div>
+      </div>
+      <div class="panel-collapse-body" id="seasonalityPanelBody" hidden>
+        <div id="seasonalityMount"></div>
+      </div>
+    </section>
+
+    <section class="panel quality is-collapsed" aria-labelledby="qualityTitle" data-collapsible>
+      <div class="section-head panel-collapse-head">
+        <button
+          type="button"
+          class="panel-collapse-toggle"
+          id="qualityCollapseToggle"
+          aria-expanded="false"
+          aria-controls="qualityPanelBody"
+        >
+          <span class="panel-collapse-titles">
+            <h2 id="qualityTitle">Качество трафика (ориентиры)</h2>
+            <span class="section-sub">CTR, отказы и роботность — справочно, не расчёт из бюджета</span>
+          </span>
+          <span class="panel-collapse-chevron" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div class="panel-collapse-body" id="qualityPanelBody" hidden>
+        <div class="quality-table-wrap">
+          <table class="quality-table" id="qualityTable">
+            <thead>
+              <tr>
+                <th>Площадка</th>
+                <th>CTR</th>
+                <th>Отказы</th>
+                <th>Роботность</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="quality-cards" id="qualityCards"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>Effective Media Mix v0.2 beta · ориентиры для медиапланирования · данные обновляются каждую неделю · последнее обновление <span id="benchDate">—</span></p>
+    <p class="footer-sources" id="footerSources">Источники расчёта: прогноз Яндекс Поиск; бенчмарк Прайм-баннер; бенчмарк VK; бенчмарк Telegram Ads; бенчмарк Авито Реклама.</p>
+  </footer>
+
+  <script src="overlap.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
